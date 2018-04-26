@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180426184810) do
+ActiveRecord::Schema.define(version: 20180426220641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,9 +23,11 @@ ActiveRecord::Schema.define(version: 20180426184810) do
     t.string  "availability"
     t.string  "source"
     t.integer "location_id"
+    t.string  "floorplan"
   end
 
   create_table "locations", force: :cascade do |t|
     t.string "city_state"
   end
+
 end
