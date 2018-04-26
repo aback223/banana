@@ -20,5 +20,6 @@ class ScraperController < ApplicationController
       )
       location.listings.push(listing)
     end
+    b.close
   end
 end
