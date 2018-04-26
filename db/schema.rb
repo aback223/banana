@@ -28,5 +28,4 @@ ActiveRecord::Schema.define(version: 20180426184810) do
   create_table "locations", force: :cascade do |t|
     t.string "city_state"
   end
-
 end
