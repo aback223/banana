@@ -1,4 +1,4 @@
-class LocationController < ApplicationController
+class LocationsController < ApplicationController
   def index
     @locations = Location.all
     respond_to do |format|
