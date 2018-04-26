@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180426233605) do
+ActiveRecord::Schema.define(version: 20180426235615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "days", force: :cascade do |t|
+    t.string  "date"
+    t.string  "rent"
+    t.integer "listing_id"
+    t.index ["listing_id"], name: "index_days_on_listing_id", using: :btree
+  end
 
   create_table "listings", force: :cascade do |t|
     t.string  "unit_number"
