@@ -11,9 +11,9 @@ class ScraperController < ApplicationController
     available_units.each do |unit|
       Listing.create(
         unit_number: unit.css('.listing-unit-num').text, 
-        unit_type: unit.xpath('//*[@id="unit-availability-data"]/div[1]/a/h3/text()[1]').text, 
-        sq_feet: unit.xpath('//*[@id="unit-availability-data"]/div[1]/a/h3/text()[3]').text.split(" ")[0], 
-        rent_cost: unit.xpath('//*[@id="unit-availability-data"]/div[1]/a/h3/text()[4]').text , 
+        unit_type: unit.css('.listing-unit-info').children[0].text, 
+        sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
+        rent_cost: unit.css('.listing-unit-info').children[6].text, 
         availability: unit.css('.listing-unit-date').text,
         source: "Aria"
       )
