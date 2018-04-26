@@ -10,16 +10,15 @@ class ScraperController < ApplicationController
     available_units = doc.css('.available-unit a')
     location = Location.create(city_state: "Cerritos, CA")
     available_units.each do |unit|
-        listing = Listing.create(
-          unit_number: unit.css('.listing-unit-num').text, 
-          unit_type: unit.css('.listing-unit-info').children[0].text, 
-          floorplan: unit.css('.listing-unit-image img').attr("src").text,
-          sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
-          rent_cost: unit.css('.listing-unit-info').children[6].text, 
-          availability: unit.css('.listing-unit-date').text,
-          source: "Aria"
-        )
-        location.listings.push(listing)
+      listing = Listing.create(
+        unit_number: unit.css('.listing-unit-num').text, 
+        unit_type: unit.css('.listing-unit-info').children[0].text, 
+        floorplan: unit.css('.listing-unit-image img').attr("src").text,
+        sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
+        availability: unit.css('.listing-unit-date').text,
+        source: "Aria Apartments"
+      )
+      location.listings.push(listing)
     end
   end
 end

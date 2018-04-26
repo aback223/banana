@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180426220641) do
+ActiveRecord::Schema.define(version: 20180426233605) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(version: 20180426220641) do
     t.string  "unit_number"
     t.string  "unit_type"
     t.string  "sq_feet"
-    t.string  "rent_cost"
     t.string  "availability"
     t.string  "source"
     t.integer "location_id"
