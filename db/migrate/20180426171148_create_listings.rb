@@ -6,6 +6,7 @@ class CreateListings < ActiveRecord::Migration[5.0]
       t.string :sq_feet
       t.string :rent_cost
       t.string :availability
+      t.string :source
     end
   end
 end
