@@ -1,5 +1,6 @@
 <% @locations.each do |location|  %>
   <h3><%= location.city_state %></h3>
+  <% location.listings.each do |listing| %>
     <ul>
       <li>Unit: <%= listing.unit_number %></li>
       <li>Unit Type: <%= listing.unit_type %></li>
@@ -9,3 +10,4 @@
       <li>Source: <%= listing.source %></li>
     </ul>
   <% end %>
+r<% end %>
