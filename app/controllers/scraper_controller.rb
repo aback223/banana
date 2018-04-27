@@ -15,8 +15,9 @@ class ScraperController < ApplicationController
     available_units.each do |unit|
       listing = Listing.create(
         unit_number: unit.css('.listing-unit-num').text, 
-        unit_type: unit.css('.listing-unit-info').children[0].text, 
-        floorplan: unit.css('.listing-unit-image img').attr("src").text,
+        unit_type: unit.css('.listing-unit-info').children[2].text,
+        image: unit.css('.listing-unit-image img').attr("src").text,
+        floorplan: unit.css('.listing-unit-info').children[0].text,
         sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
         availability: unit.css('.listing-unit-date').text,
         source: "Aria Apartments"
