@@ -12,7 +12,7 @@
         <th><%= day.date %></th>
       <% end %>
     </tr>
-    <% location.listings.each do |listing| %>
+    <% @listings.each do |listing| %>
       <tr>
         <td><%= listing.source %></td>
         <td><%= listing.unit_type %></td>
