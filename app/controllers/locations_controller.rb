@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
     @days = Day.unique_dates
     respond_to do |format|
       format.html {render :index}
-      format.json {render json: @locations, include: '**'}
+      format.json {render json: @locations}
     end
   end
 end
