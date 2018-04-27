@@ -8,7 +8,7 @@
       <th>Unit #</th>
       <th>SF</th>
       <th>Status</th>
-      <% @days.each do |day| %>
+      <% location.get_unique_dates.each do |day| %>
         <th><%= day.date %></th>
       <% end %>
     </tr>
@@ -29,4 +29,3 @@
 <% end %> <%#= locations %>
 
 
-   
