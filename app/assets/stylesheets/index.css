@@ -11,8 +11,8 @@ button {
   color: white;
 }
 
-table#location_data th, tr {
-  padding: 10px;
+table#location_data th, tr, td {
+  padding: 20px;
 }
 
 table#location_data tr:nth-child(even) {
@@ -20,4 +20,8 @@ table#location_data tr:nth-child(even) {
 }
 table#location_data tr:nth-child(odd) {
     background-color: #fff;
+}
+
+table#location_data {
+  text-align: center;
 }
