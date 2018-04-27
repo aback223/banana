@@ -37,4 +37,30 @@ class Listing < ActiveRecord::Base
       day.date
     end
   end
+
+  def get_floorplan_count
+    floorplan_hash = {
+      "S1": 0, 
+      "S2": 0, 
+      "A1": 0, 
+      "A2": 0, 
+      "A3": 0, 
+      "A4": 0, 
+      "B1": 0, 
+      "B2": 0, 
+      "B3": 0, 
+      "B4": 0, 
+      "S2L": 0, 
+      "A1L": 0, 
+      "A2L": 0, 
+      "A3L": 0, 
+      "B2L": 0, 
+      "B3L": 0, 
+      "B4L": 0
+    }
+    floorplan_hash.stringify_keys!
+    floorplan_hash.map do |key,value|
+      floorplan_hash[key] = Listing.where(floorplan: "#{key}")
+    end
+  end
 end
