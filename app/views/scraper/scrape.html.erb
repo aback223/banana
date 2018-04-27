@@ -1,0 +1,7 @@
+<% if flash[:notice] %>
+  <div class="notice" style="color: red"><strong><%= flash[:notice] %></strong></div>
+<% end %>
+<br>
+<%= link_to "Scrape Data", scrape_data_path, data: {confirm: "Are you sure? Clicking this may duplicate data if you've already scraped it once."} %>
+<br><br>
+<%= link_to "Scrape Day", scrape_day_path %>
