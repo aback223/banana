@@ -35,20 +35,23 @@ class ScraperController < ApplicationController
     doc ||= Nokogiri::HTML(b.html)
     available_units = doc.css('.available-unit a')
     available_units.each do |unit|
-      listing = Listing.find_by(unit_number: unit.css('.listing-unit-num').text)
-      new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text) 
-      if !listing.days.empty?
-        listing.days.each do |day|
-          if day.date == Date.today.strftime("%m/%d/%Y") && day.rent != new_day.rent
-            day.update(rent: unit.css('.listing-unit-info').children[6].text)
-          elsif day.date != Date.today.strftime("%m/%d/%Y")
+      Listing.all.each do |listing|
+        if listing.unit_number == unit.css('.listing-unit-num').text
+          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text) 
+          if !listing.days.empty?
+            listing.days.each do |day|
+              if listing.get_unique_dates.include?(Date.today.strftime("%m/%d/%Y")) && (day.rent != new_day.rent)
+                day.update(rent: unit.css('.listing-unit-info').children[6].text)
+              elsif listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+                new_day.save
+                listing.days.push(new_day) 
+              end
+            end
+          elsif listing.days.empty?
             new_day.save
             listing.days.push(new_day) 
           end
         end
-      else 
-        new_day.save
-        listing.days.push(new_day) 
       end
     end
     b.close
@@ -57,5 +60,13 @@ class ScraperController < ApplicationController
   end
 
   def check_availability
+    b = Watir::Browser.new :chrome, headless: true
+    b.goto "https://www.livearia.com/availability"
+    doc ||= Nokogiri::HTML(b.html)
+    available_units = doc.css('.available-unit a')
+    available_units.each do |unit|
+      Listing.all.each do 
+      end
+    end
   end
 end
