@@ -1,13 +1,32 @@
 <% @locations.each do |location|  %>
   <h3><%= location.city_state %></h3>
-  <% location.listings.each do |listing| %>
-      <strong>Unit: <%= listing.unit_number %></strong><br>
-    <ul>
-      <li>Unit Type: <%= listing.unit_type %></li>
-      <li><%= listing.sq_feet %> Sq Feet</li>
-      <li><%= listing.rent_cost %></li>
-      <li><%= listing.availability %></li>
-      <li>Source: <%= listing.source %></li>
-    </ul>
-  <% end %>
-<% end %>
+  <table id="location_data">
+    <tr>
+      <th>Property</th>
+      <th>Unit Type</th>
+      <th>Floor Plan</th>
+      <th>Unit #</th>
+      <th>SF</th>
+      <th>Status</th>
+      <% @days.each do |day| %>
+        <th><%= day.date %></th>
+      <% end %>
+    </tr>
+    <% location.listings.each do |listing| %>
+      <tr>
+        <td><%= listing.source %></td>
+        <td><%= listing.unit_type %></td>
+        <td><%= listing.floorplan %></td>
+        <td><%= listing.unit_number %></td>
+        <td><%= listing.sq_feet %></td>
+        <td><%= listing.availability %></td>
+        <% listing.days.each do |day| %>
+          <td><%=day.rent %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+<% end %> <%#= locations %>
+
+
+   
