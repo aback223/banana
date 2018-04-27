@@ -64,9 +64,22 @@ class ScraperController < ApplicationController
     b.goto "https://www.livearia.com/availability"
     doc ||= Nokogiri::HTML(b.html)
     available_units = doc.css('.available-unit a')
+    unit_array = []
     available_units.each do |unit|
-      Listing.all.each do 
+      unit_array << unit.css('.listing-unit-num').text
+    end
+    Listing.all.each do |listing|
+      if unit_array.exclude?(listing.unit_number)
+        listing.update(availability: "Not Available")
+        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: " ") 
+        if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+          new_day.save
+          listing.days.push(new_day) 
+        end
       end
     end
+    b.close
+    flash[:notice] = "Done checking availability"
+    redirect_to scraper_path
   end
 end

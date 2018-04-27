@@ -8,5 +8,5 @@ Rails.application.routes.draw do
   get '/scraper', to: 'scraper#scrape'
   get '/scrape_data', to: 'scraper#scrape_data'
   get '/scrape_day', to: 'scraper#scrape_day'
-  get '/check_availability', to 'scraper#check_availability'
+  get '/check_availability', to: 'scraper#check_availability'
 end
