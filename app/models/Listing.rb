@@ -29,4 +29,12 @@ class Listing < ActiveRecord::Base
       floorplan
     ")
   end
+
+  def get_unique_dates
+    listing = Listing.find_by(id: self.id)
+    day_records = listing.days.select(:date).distinct
+    day_records.map do |day|
+      day.date
+    end
+  end
 end
