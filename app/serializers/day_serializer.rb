@@ -1,4 +1,3 @@
-# class DaySerializer < ActiveModel::Serializer
-#   attributes :id, :date, :rent, :listing_id
-#   belongs_to :listing
-# end
+class DaySerializer < ActiveModel::Serializer
+  attributes :id, :date, :rent, :listing_id
+end
