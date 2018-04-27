@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root 'listings#index'
   resources :locations, only: :index
   resources :days, only: :index
+  resources :listings, only: :index
 
   get '/scraper', to: 'scraper#scrape'
   get '/scrape_data', to: 'scraper#scrape_data'
