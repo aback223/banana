@@ -7,12 +7,10 @@ input {
 button {
   padding: 10px;
   border-radius: 3px;
-  background-color: red;
-  color: white;
 }
 
 table#location_data th, tr, td {
-  padding: 10px;
+  padding: 2px;
 }
 
 table#location_data tr:nth-child(even) {

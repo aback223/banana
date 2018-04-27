@@ -1,31 +1,63 @@
-<% @locations.each do |location|  %>
-  <h3><%= location.city_state %></h3>
-  <table id="location_data">
-    <tr>
-      <th>Property</th>
-      <th>Unit Type</th>
-      <th>Floor Plan</th>
-      <th>Unit #</th>
-      <th>SF</th>
-      <th>Status</th>
-      <% location.get_unique_dates.each do |day| %>
-        <th><%= day.date %></th>
-      <% end %>
-    </tr>
-    <% @listings.each do |listing| %>
+<div class="tab">
+  <button class="tablinks" onclick="showData(event, 'chartA')">Chart A</button>
+  <button class="tablinks" onclick="showData(event, 'chartB')">Chart B</button>
+</div>
+
+<div id="chartA" class="tabcontent">
+  <% @locations.each do |location|  %>
+    <h3><%= location.city_state %></h3>
+    <table id="location_data">
       <tr>
-        <td><%= listing.source %></td>
-        <td><%= listing.unit_type %></td>
-        <td><%= listing.floorplan %></td>
-        <td><%= listing.unit_number %></td>
-        <td><%= listing.sq_feet %></td>
-        <td><%= listing.availability %></td>
-        <% listing.days.each do |day| %>
-          <td><%=day.rent %></td>
+        <th>Property</th>
+        <th>Unit Type</th>
+        <th>Floor Plan</th>
+        <th>Unit #</th>
+        <th>SF</th>
+        <th>Status</th>
+        <% location.get_unique_dates.each do |day| %>
+          <th><%= day.date %></th>
         <% end %>
       </tr>
-    <% end %>
-  </table>
-<% end %> <%#= locations %>
+      <% @listings.each do |listing| %>
+        <tr>
+          <td><%= listing.source %></td>
+          <td><%= listing.unit_type %></td>
+          <td><%= listing.floorplan %></td>
+          <td><%= listing.unit_number %></td>
+          <td><%= listing.sq_feet %></td>
+          <td><%= listing.availability %></td>
+          <% listing.days.each do |day| %>
+            <td><%=day.rent %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+  <% end %> <%#= locations %>
+</div>
 
+<div id="chartB" class="tabcontent">
+  <p>THis is chart B</p>
+</div>
 
+<script type="text/javascript" charset="utf-8">
+  function showData(evt, chartName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(chartName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+</script>
