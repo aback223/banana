@@ -38,7 +38,7 @@ class Listing < ActiveRecord::Base
     end
   end
 
-  def get_floorplan_count
+  def by_floorplan
     floorplan_hash = {
       "S1": 0, 
       "S2": 0, 
