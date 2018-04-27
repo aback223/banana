@@ -42,4 +42,7 @@ class ScraperController < ApplicationController
     flash[:notice] = "Done scraping daily rent"
     redirect_to scraper_path
   end
+
+  def check_availability
+  end
 end
