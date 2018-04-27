@@ -35,8 +35,18 @@ class ScraperController < ApplicationController
     available_units = doc.css('.available-unit a')
     available_units.each do |unit|
       listing = Listing.find_by(unit_number: unit.css('.listing-unit-num').text)
-      day = Day.create(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text) 
-      listing.days.push(day)
+      day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text) 
+      if !listing.days.empty?
+        listing.days.each do |day|
+          if day.date != Date.today.strftime("%m/%d/%Y")
+            day.save
+            listing.days.push(day) 
+          end
+        end
+      else 
+        day.save
+        listing.days.push(day) 
+      end
     end
     b.close
     flash[:notice] = "Done scraping daily rent"
