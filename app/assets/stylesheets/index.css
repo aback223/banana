@@ -29,6 +29,11 @@ table.chartB tr:nth-child(odd) {
     background-color: #fff;
 }
 
-table#location_data, #chartB {
+table#location_data, #chartB, .chartC {
   text-align: center;
 }
+
+table.chartC th, tr, td {
+  padding: 10px;
+}
+
