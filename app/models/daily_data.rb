@@ -6,4 +6,8 @@ class DailyData < ActiveRecord::Base
       new = DailyData.create(date: Date.today.strftime("%m/%d/%Y"), occupancy: occupancy, leased: leased)
     end
   end
+
+  def self.row_headers 
+    hash = ["Occupancy", "Leased"]
+  end
 end
