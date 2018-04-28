@@ -6,6 +6,8 @@ DON'T TOUCH THESE BUTTONS UNLESS YOU KNOW WHAT THEY'RE FOR. OTHERWISE YOU WILL R
 <br><br>
 <%= link_to "Scrape Data", scrape_data_path, data: {confirm: "Are you sure? Clicking this may duplicate data if you've already scraped it once."} %>
 <br><br>
-<%= link_to "Scrape Day", scrape_day_path %>
+<%= link_to "Scrape Day", scrape_day_path %> // Do this daily
 <br><br>
-<%= link_to "Check Availability", check_availability_path %>
+<%= link_to "Check Availability", check_availability_path %> // Do this daily
+<br><br>
+<%= link_to "Add Totals to DB", saveDailyTotals_path %> // Do this daily
