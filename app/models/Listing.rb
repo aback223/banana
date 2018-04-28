@@ -48,6 +48,29 @@ class Listing < ActiveRecord::Base
     total_units.stringify_keys!
   end
 
+  def self.hash_with_arrays
+    hash = {
+      "S1": [], 
+      "S2": [], 
+      "A1": [], 
+      "A2": [], 
+      "A3": [], 
+      "A4": [], 
+      "B1": [], 
+      "B2": [], 
+      "B3": [], 
+      "B4": [], 
+      "S2L": [], 
+      "A1L": [], 
+      "A2L": [], 
+      "A3L": [], 
+      "B2L": [], 
+      "B3L": [], 
+      "B4L": []
+    }
+    hash.stringify_keys!
+  end
+
   def self.calc_totalUnits
     self.total_by_floorplan.values.reduce(:+)
   end
@@ -89,11 +112,11 @@ class Listing < ActiveRecord::Base
   end
 
   def self.by_floorplan
-    hash = self.floorplan_hash
+    hash = self.hash_with_arrays
     hash.each do |key,value|
       Listing.all.each do |listing|
         if listing.availability != "Not Available" && listing.floorplan == key
-          hash[key] = Listing.where(floorplan: key)
+          hash[key] << listing
         end
       end
     end
