@@ -121,21 +121,11 @@
 <div class="tabcontent" id="chartC">
 <br>
 <table class="chartC">
-  <tr>
-    <th>Total Property</th>
-    <% Location.first.get_unique_dates.each do |day| %>
-      <th><%= day.date %></th>
-    <% end %>
-  </tr>
-  <tr>
-    <% DailyData.row_headers.each do |h| %>
-      <td><%= h %></td>
-      <% DailyData.all.each do |data| %>
-        <td><%= data.occupancy%></td>
-        <td><%= data.leased %></td>
-      <% end %>
-    <% end %>
-  </tr>
+  <% DailyData.all.each do |data| %>
+    <th><%= data.date %></th>
+    <tr><td>Occupancy: <%= data.occupancy %></td></tr>
+    <tr><td>Leased: <%= data.leased %></td></tr>
+  <% end %>
 </table>
 </div>
 
