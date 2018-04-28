@@ -80,7 +80,11 @@
             <td><%= avail_pct %></td>
           <% end %>
         <% end %>
-        <td><%= value.count %></td>
+        <% if value != 0 %>
+          <td><%= value.count %></td>
+        <% else %>
+          <td>0</td>
+        <% end %>
         <% Listing.exposure_pct.each do |a, exp_pct| %>
           <% if a == key %>
             <td><%= exp_pct %></td>
