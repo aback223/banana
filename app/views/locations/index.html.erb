@@ -1,6 +1,7 @@
 <div class="tab">
   <button class="tablinks" onclick="showData(event, 'chartA')">Chart A</button>
   <button class="tablinks" onclick="showData(event, 'chartB')">Chart B</button>
+  <button class="tablinks" onclick="showData(event, 'chartC')">Chart C</button>
 </div>
 
 <div id="chartA" class="tabcontent">
@@ -54,7 +55,7 @@
     <% Listing.by_floorplan.each do |key, value| %>
       <tr>
         <td><%= key %></td>
-        <% Listing.total_units.each do |unitNum, unit_total|%>
+        <% Listing.total_by_floorplan.each do |unitNum, unit_total|%>
           <% if unitNum == key %>
             <td><%= unit_total %></td>
           <% end %>
@@ -104,7 +105,38 @@
         <% end %>
       </tr>
     <% end %>
+    <tr>
+      <td>Total</td>
+      <td><%= Listing.calc_totalUnits %></td>
+      <td><%= Listing.calc_totalVacantNum %></td>
+      <td><%= Listing.calc_ttlVacantPct + "%" %></td>
+      <td><%= Listing.totalAvailNum %></td>
+      <td><%= Listing.availPct + "%" %></td>
+      <td><%= Listing.exposureTtl %></td>
+      <td><%= Listing.ttlExpPct + "%" %></td>
+    </tr>
   </table>
+</div>
+
+<div class="tabcontent" id="chartC">
+<br>
+<table class="chartC">
+  <tr>
+    <th>Total Property</th>
+    <% Location.first.get_unique_dates.each do |day| %>
+      <th><%= day.date %></th>
+    <% end %>
+  </tr>
+  <tr>
+    <% DailyData.row_headers.each do |h| %>
+      <td><%= h %></td>
+      <% DailyData.all.each do |data| %>
+        <td><%= data.occupancy%></td>
+        <td><%= data.leased %></td>
+      <% end %>
+    <% end %>
+  </tr>
+</table>
 </div>
 
 <script type="text/javascript" charset="utf-8">
