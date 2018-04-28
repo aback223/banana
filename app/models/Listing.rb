@@ -25,7 +25,7 @@ class Listing < ActiveRecord::Base
     hash.stringify_keys!
   end
 
-  def self.total_units
+  def self.total_by_floorplan
     total_units = {
       "S1": 5, 
       "S2": 9, 
@@ -48,8 +48,12 @@ class Listing < ActiveRecord::Base
     total_units.stringify_keys!
   end
 
+  def self.calc_totalUnits
+    self.total_by_floorplan.values.reduce(:+)
+  end
+
   def self.sort_avail_then_floorplan
-    Listing.order("
+    self.order("
       CASE
         WHEN availability LIKE 'Available Now' THEN 1
         WHEN floorplan LIKE 'S1' THEN 2
@@ -77,7 +81,7 @@ class Listing < ActiveRecord::Base
   end
 
   def get_unique_dates
-    listing = Listing.find_by(id: self.id)
+    listing = self.find_by(id: self.id)
     day_records = listing.days.select(:date).distinct
     day_records.map do |day|
       day.date
@@ -86,17 +90,25 @@ class Listing < ActiveRecord::Base
   end
 
   def self.by_floorplan
-    hash = Listing.floorplan_hash
+    hash = self.floorplan_hash
     hash.each do |key,value|
       hash[key] = self.where(floorplan: key)
     end
     hash
   end
 
+  def self.exposureTtl
+    self.calc_totalVacantNum + self.totalAvailNum
+  end
+
+  def self.ttlExpPct
+    '%0.1f' % ((Listing.exposureTtl.to_f/Listing.calc_totalUnits.to_f) * 100)
+  end
+
   def self.vacant_num
-    hash = Listing.floorplan_hash
+    hash = self.floorplan_hash
     hash.each do |key,value|
-      Listing.all.each do |listing|
+      self.all.each do |listing|
         if key == listing.floorplan && listing.availability == "Available Now"
           hash[key] +=1
         end
@@ -105,9 +117,13 @@ class Listing < ActiveRecord::Base
     hash
   end
 
+  def self.calc_totalVacantNum
+    self.vacant_num.values.reduce(:+)
+  end
+
   def self.calc_vacantPct
-    hash = Listing.floorplan_hash
-    self.total_units.each do |unit, total|
+    hash = self.floorplan_hash
+    self.total_by_floorplan.each do |unit, total|
       self.vacant_num.each do |unitName, vacant|
         if unit == unitName
           hash["#{unit}"] = "#{('%0.2f' % ((vacant.to_f/total.to_f) * 100))}" + "%"
@@ -117,10 +133,14 @@ class Listing < ActiveRecord::Base
     hash
   end
 
+  def self.calc_ttlVacantPct
+    '%0.1f' % ((self.calc_totalVacantNum.to_f/self.calc_totalUnits.to_f) * 100)
+  end
+
   def self.calc_availNum
-    hash = Listing.floorplan_hash
+    hash = self.floorplan_hash
     hash.each do |key,value|
-      Listing.all.each do |listing|
+      self.all.each do |listing|
         if key == listing.floorplan && listing.availability.include?("/")
           hash[key] += 1
         end
@@ -129,9 +149,13 @@ class Listing < ActiveRecord::Base
     hash
   end
 
+  def self.totalAvailNum
+    self.calc_availNum.values.reduce(:+)
+  end
+
   def self.calc_availPct
-    hash = Listing.floorplan_hash
-    self.total_units.each do |unit, total|
+    hash = self.floorplan_hash
+    self.total_by_floorplan.each do |unit, total|
       self.calc_availNum.each do |unitName, available|
         if unit == unitName
           hash[unit] = "#{('%0.2f' % ((available.to_f/total.to_f) * 100))}" + "%"
@@ -141,9 +165,13 @@ class Listing < ActiveRecord::Base
     hash
   end
 
+  def self.availPct
+    '%0.1f' % ((self.totalAvailNum.to_f/self.calc_totalUnits.to_f) * 100)
+  end
+
   def self.exposure_pct
-    hash = Listing.floorplan_hash
-    self.total_units.each do |unit, total|
+    hash = self.floorplan_hash
+    self.total_by_floorplan.each do |unit, total|
       self.by_floorplan.each do |unitName, exp_num|
         if unit == unitName
           hash[unit] = "#{('%0.2f' % ((exp_num.count.to_f/total.to_f) * 100))}" + "%"
@@ -154,9 +182,9 @@ class Listing < ActiveRecord::Base
   end
 
   def self.calcMax
-    hash = Listing.floorplan_hash
+    hash = self.floorplan_hash
     hash.each do |key, value|
-      listings = Listing.where(floorplan: key)
+      listings = self.where(floorplan: key)
       listings.each do |listing|
         rent = listing.days.last.rent.tr('$', '').to_i
         if rent > hash[key]
@@ -168,9 +196,9 @@ class Listing < ActiveRecord::Base
   end
 
   def self.calcMin
-    hash = Listing.floorplan_hash
+    hash = self.floorplan_hash
     hash.each do |key, value|
-      listings = Listing.where(floorplan: key)
+      listings = self.where(floorplan: key)
       listings.each do |listing|
         rent = listing.days.last.rent.tr('$', '').to_i
         if hash[key] == 0
