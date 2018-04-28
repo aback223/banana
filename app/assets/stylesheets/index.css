@@ -10,16 +10,25 @@ button {
 }
 
 table#location_data th, tr, td {
-  padding: 2px;
+  padding: 5px;
 }
 
 table#location_data tr:nth-child(even) {
     background-color: #eee;
 }
+
+table.chartB tr:nth-child(even) {
+    background-color: #eee;
+}
+
 table#location_data tr:nth-child(odd) {
     background-color: #fff;
 }
 
-table#location_data {
+table.chartB tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+table#location_data, #chartB {
   text-align: center;
 }
