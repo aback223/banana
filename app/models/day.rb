@@ -24,6 +24,10 @@ class Day < ActiveRecord::Base
     hash.stringify_keys!
   end
 
+  def self.get_unique_dates
+    self.distinct.pluck(:date)
+  end
+
   def self.calcAvg
     hash = Day.floorplan_hash
     hash.each do |key, value|
