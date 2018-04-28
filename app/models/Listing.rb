@@ -81,18 +81,21 @@ class Listing < ActiveRecord::Base
   end
 
   def get_unique_dates
-    listing = self.find_by(id: self.id)
+    listing = Listing.find_by(id: self.id)
     day_records = listing.days.select(:date).distinct
     day_records.map do |day|
       day.date
     end
-    @day_records ||= day_records
   end
 
   def self.by_floorplan
     hash = self.floorplan_hash
     hash.each do |key,value|
-      hash[key] = self.where(floorplan: key)
+      Listing.all.each do |listing|
+        if listing.availability != "Not Available" && listing.floorplan == key
+          hash[key] = Listing.where(floorplan: key)
+        end
+      end
     end
     hash
   end
@@ -173,7 +176,7 @@ class Listing < ActiveRecord::Base
     hash = self.floorplan_hash
     self.total_by_floorplan.each do |unit, total|
       self.by_floorplan.each do |unitName, exp_num|
-        if unit == unitName
+        if unit == unitName && exp_num != 0
           hash[unit] = "#{('%0.2f' % ((exp_num.count.to_f/total.to_f) * 100))}" + "%"
         end
       end
