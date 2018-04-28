@@ -2,6 +2,9 @@ class Listing < ActiveRecord::Base
   belongs_to :location
   has_many :days
 
+  def self.to_csv(options: {})
+  end
+  
   def self.floorplan_hash
     hash = {
       "S1": 0, 
