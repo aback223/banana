@@ -2,7 +2,7 @@ class CsvExport < ActiveRecord::Base
 
   def self.to_csv(options: {})
     CSV.generate(options) do |csv|
-      csv.add_row header_names          #header
+      csv.add_row self.         #header
       all.each do |foo|                 #row value iteration
         values = foo.attributes.values
         csv.add_row values 
