@@ -10,10 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180428201008) do
+ActiveRecord::Schema.define(version: 20180428203426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "aria_reports", force: :cascade do |t|
+    t.string  "floorplan"
+    t.integer "vacant"
+    t.decimal "vacant_pct"
+    t.integer "avail"
+    t.decimal "avail_pct"
+    t.integer "exposure"
+    t.decimal "exp_pct"
+    t.integer "min"
+    t.integer "max"
+    t.integer "avg"
+    t.integer "date_id"
+  end
 
   create_table "daily_data", force: :cascade do |t|
     t.string "date"
