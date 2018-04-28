@@ -16,7 +16,7 @@
         <th>SF</th>
         <th>Status</th>
         <% location.get_unique_dates.each do |day| %>
-          <th><%= day.date %></th>
+          <th><%= day %></th>
         <% end %>
       </tr>
       <% @listings.each do |listing| %>
