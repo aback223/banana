@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   get '/scrape_day', to: 'scraper#scrape_day'
   get '/check_availability', to: 'scraper#check_availability'
   get '/saveDailyTotals', to: 'daily_data#calcAndAdd'
+  get '/findNewData', to: 'scraper#add_newData'
 end
