@@ -71,7 +71,7 @@ class ScraperController < ApplicationController
     Listing.all.each do |listing|
       if unit_array.exclude?(listing.unit_number)
         listing.update(availability: "Not Available")
-        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: " ") 
+        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "N/A") 
         if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
           new_day.save
           listing.days.push(new_day) 
@@ -80,6 +80,33 @@ class ScraperController < ApplicationController
     end
     b.close
     flash[:notice] = "Done checking availability"
+    redirect_to scraper_path
+  end
+
+  def add_newData
+    b = Watir::Browser.new :chrome, headless: true
+    b.goto "https://www.livearia.com/availability"
+    doc ||= Nokogiri::HTML(b.html)
+    available_units = doc.css('.available-unit a')
+    unit_array = []
+    available_units.each do |unit|
+      if Listing.where(unit_number: unit.css('.listing-unit-num').text).empty?
+        listing = Listing.create(
+          unit_number: unit.css('.listing-unit-num').text, 
+          unit_type: unit.css('.listing-unit-info').children[2].text,
+          image: unit.css('.listing-unit-image img').attr("src").text,
+          floorplan: unit.css('.listing-unit-info').children[0].text,
+          sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
+          availability: unit.css('.listing-unit-date').text,
+          source: "Aria Apartments"
+        )
+        new_day = Day.create(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text)
+        Location.first.listings.push(listing)
+        listing.days.push(new_day)
+      end
+    end
+    flash[:notice] = "Done adding new data"
+    b.close
     redirect_to scraper_path
   end
 end
