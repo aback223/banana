@@ -36,7 +36,75 @@
 </div>
 
 <div id="chartB" class="tabcontent">
-  <p>THis is chart B</p>
+  <br>
+  <table class="chartB">
+    <tr>
+      <th>Floor Plan</th>
+      <th>Total</th>
+      <th>Vacant</th>
+      <th>Vacant %</th>
+      <th>Available</th>
+      <th>Available %</th>
+      <th>Exposure</th>
+      <th>Exposure %</th>
+      <th>Minimum</th>
+      <th>Maximum</th>
+      <th>Average</th>
+    </tr>
+    <% Listing.by_floorplan.each do |key, value| %>
+      <tr>
+        <td><%= key %></td>
+        <% Listing.total_units.each do |unitNum, unit_total|%>
+          <% if unitNum == key %>
+            <td><%= unit_total %></td>
+          <% end %>
+        <% end %>
+        <% Listing.vacant_num.each do |unit, vac_total| %>
+          <% if unit == key %>
+            <td><%= vac_total %></td>
+          <% end %>
+        <% end %>
+        <% Listing.calc_vacantPct.each do |k, vac_percent| %>
+          <% if k == key %>
+            <td><%= vac_percent %></td>
+          <% end %>
+        <% end %>
+        <% Listing.calc_availNum.each do |x, avail_num| %>
+          <% if x == key %>
+            <td><%= avail_num %></td>
+          <% end %>
+        <% end %>
+        <% Listing.calc_availPct.each do |z, avail_pct| %>
+          <% if z == key %>
+            <td><%= avail_pct %></td>
+          <% end %>
+        <% end %>
+        <td><%= value.count %></td>
+        <% Listing.exposure_pct.each do |a, exp_pct| %>
+          <% if a == key %>
+            <td><%= exp_pct %></td>
+          <% end %>
+        <% end %>
+        <% Listing.calcMin.each do |b, min_rent| %>
+          <% if b == key %>
+            <td>$<%= min_rent %></td>
+          <% end %>
+        <% end %>
+        <% Listing.calcMax.each do |c, max_rent| %>
+          <% if c == key %>
+            <td>$<%= max_rent %></td>
+          <% end %>
+        <% end %>
+        <% Day.calcAvg.each do |d, avg_rent| %>
+          <% if d == key && avg_rent != [] %>
+            <td><%= "$" + "#{avg_rent}" %></td>
+          <% elsif d == key && avg_rent == [] %>
+            <td><%= "0" %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
 </div>
 
 <script type="text/javascript" charset="utf-8">
