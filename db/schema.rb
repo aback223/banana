@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180428203426) do
+ActiveRecord::Schema.define(version: 20180428204604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,12 @@ ActiveRecord::Schema.define(version: 20180428203426) do
     t.integer "max"
     t.integer "avg"
     t.integer "date_id"
+  end
+
+  create_table "aria_static_data", force: :cascade do |t|
+    t.string  "floorplan"
+    t.integer "total"
+    t.integer "source_id"
   end
 
   create_table "daily_data", force: :cascade do |t|
