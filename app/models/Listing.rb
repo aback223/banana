@@ -99,7 +99,8 @@ class Listing < ActiveRecord::Base
         WHEN floorplan LIKE 'B2L' THEN 16
         WHEN floorplan LIKE 'B3L' THEN 17
         WHEN floorplan LIKE 'B4L' THEN 18
-        ELSE 19
+        WHEN availability LIKE 'Not Available' THEN 19
+        ELSE 20
       END,
       availability,
       floorplan
@@ -118,7 +119,7 @@ class Listing < ActiveRecord::Base
     hash = self.hash_with_arrays
     hash.each do |key,value|
       Listing.all.each do |listing|
-        if listing.availability != "Not Available" && listing.floorplan == key
+        if listing.availability != "Unavailable" && listing.floorplan == key
           hash[key] << listing
         end
       end
@@ -213,7 +214,7 @@ class Listing < ActiveRecord::Base
   def self.calcMax
     hash = self.floorplan_hash
     hash.each do |key, value|
-      listings = self.where(floorplan: key)
+      listings = self.where(floorplan: key).where.not(availability: "Unavailable")
       listings.each do |listing|
         rent = listing.days.last.rent.tr('$', '').to_i
         if rent > hash[key]
@@ -227,12 +228,10 @@ class Listing < ActiveRecord::Base
   def self.calcMin
     hash = self.floorplan_hash
     hash.each do |key, value|
-      listings = self.where(floorplan: key)
+      listings = self.where(floorplan: key).where.not(availability: "Unavailable")
       listings.each do |listing|
         rent = listing.days.last.rent.tr('$', '').to_i
-        if hash[key] == 0
-          hash[key] = rent
-        elsif rent < hash[key]
+        if hash[key] == 0 || rent < hash[key]
           hash[key] = rent
         end
       end
