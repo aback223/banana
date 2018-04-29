@@ -39,7 +39,7 @@ class Day < ActiveRecord::Base
     end
     hash.each do |key, value|
       if !value.empty?
-        hash[key] = (value.inject(:+)/value.size).round
+        hash[key] = (value.inject(:+)/value.size)
       end
     end
     hash
