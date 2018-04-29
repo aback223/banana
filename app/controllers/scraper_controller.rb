@@ -75,9 +75,16 @@ class ScraperController < ApplicationController
       unit_array << unit.css('.listing-unit-num').text
     end
     Listing.all.each do |listing|
-      if unit_array.exclude?(listing.unit_number)
+      if unit_array.exclude?(listing.unit_number) && listing.availability != "Unavailable"
         listing.update(availability: "Unavailable")
         new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "0") 
+        if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+          new_day.save
+          listing.days.push(new_day) 
+        end
+      elsif unit_array.include?(listing.unit_number) && listing.availability == "Unavailable"
+        listing.update(availability: unit.css('.listing-unit-date').text)
+        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
         if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
           new_day.save
           listing.days.push(new_day) 
