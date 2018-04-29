@@ -70,8 +70,8 @@ class ScraperController < ApplicationController
     end
     Listing.all.each do |listing|
       if unit_array.exclude?(listing.unit_number)
-        listing.update(availability: "Not Available")
-        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "N/A") 
+        listing.update(availability: "Unavailable")
+        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "0") 
         if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
           new_day.save
           listing.days.push(new_day) 
