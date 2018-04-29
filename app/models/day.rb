@@ -25,7 +25,7 @@ class Day < ActiveRecord::Base
   end
 
   def self.get_unique_dates
-    self.distinct.pluck(:date)
+    self.distinct.order(:date).pluck(:date)
   end
 
   def self.calcAvg
