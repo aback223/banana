@@ -108,7 +108,7 @@ class Listing < ActiveRecord::Base
         WHEN floorplan LIKE 'B2L' THEN 16
         WHEN floorplan LIKE 'B3L' THEN 17
         WHEN floorplan LIKE 'B4L' THEN 18
-        WHEN availability LIKE 'Not Available' THEN 19
+        WHEN availability LIKE 'Unavailable' THEN 19
         ELSE 20
       END,
       availability,
