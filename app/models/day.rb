@@ -32,7 +32,7 @@ class Day < ActiveRecord::Base
     hash = Day.floorplan_hash
     hash.each do |key, value|
       Day.all.each do |day|
-        if key == day.listing.floorplan && day.date == Date.today.strftime("%m/%d/%Y")
+        if key == day.listing.floorplan && day.date == Date.today.strftime("%m/%d/%Y") && day.listing.availability != "Unavailable"
           hash[key] << day.rent.tr('$', '').to_i
         end
       end
