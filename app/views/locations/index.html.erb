@@ -27,8 +27,12 @@
           <td><%= listing.unit_number %></td>
           <td><%= listing.sq_feet %></td>
           <td><%= listing.availability %></td>
-          <% listing.days.reverse.each do |day| %>
-            <td><%=day.rent %></td>
+          <% listing.days.order(:date).reverse.each do |day| %>
+            <% if day.rent == "0" %>
+              <td><%=day.rent %></td>
+            <% else %>
+              <td>$<%=day.rent %></td>
+            <% end %>
           <% end %>
         </tr>
       <% end %>
@@ -91,13 +95,17 @@
           <% end %>
         <% end %>
         <% Listing.calcMin.each do |b, min_rent| %>
-          <% if b == key %>
+          <% if b == key && min_rent != 0 %>
             <td>$<%= min_rent %></td>
+          <% elsif b == key && min_rent == 0 %>
+            <td><%= min_rent %></td>
           <% end %>
         <% end %>
         <% Listing.calcMax.each do |c, max_rent| %>
-          <% if c == key %>
+          <% if c == key && max_rent != 0 %>
             <td>$<%= max_rent %></td>
+          <% elsif c == key && max_rent ==0%>
+            <td><%= max_rent %></td>
           <% end %>
         <% end %>
         <% Day.calcAvg.each do |d, avg_rent| %>
@@ -127,8 +135,8 @@
 <table class="chartC">
   <% DailyData.all.each do |data| %>
     <th><%= data.date %></th>
-    <tr><td>Occupancy: <%= data.occupancy %></td></tr>
-    <tr><td>Leased: <%= data.leased %></td></tr>
+    <tr><td>Occupancy: <%= data.occupancy %>%</td></tr>
+    <tr><td>Leased: <%= data.leased %>%</td></tr>
   <% end %>
 </table>
 </div>
