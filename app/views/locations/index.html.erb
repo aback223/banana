@@ -15,7 +15,7 @@
         <th>Unit #</th>
         <th>SF</th>
         <th>Status</th>
-        <% location.get_unique_dates.each do |day| %>
+        <% location.get_unique_dates.reverse.each do |day| %>
           <th><%= day %></th>
         <% end %>
       </tr>
@@ -27,7 +27,7 @@
           <td><%= listing.unit_number %></td>
           <td><%= listing.sq_feet %></td>
           <td><%= listing.availability %></td>
-          <% listing.days.each do |day| %>
+          <% listing.days.reverse.each do |day| %>
             <td><%=day.rent %></td>
           <% end %>
         </tr>
