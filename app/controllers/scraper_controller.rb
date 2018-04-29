@@ -11,9 +11,9 @@ class ScraperController < ApplicationController
     b.goto "https://www.livearia.com/availability"
     doc ||= Nokogiri::HTML(b.html)
     available_units = doc.css('.available-unit a')
-    location = ""
-    if Location.where(city_state: "Cerritos, CA").empty?
-      location = Location.create(city_state: "Cerritos, CA")
+    input = "Cerritos, CA"
+    if Location.where(city_state: input).empty?
+      location = Location.create(city_state: input)
       available_units.each do |unit|
         if Listing.where(unit_number: unit.css('.listing-unit-num').text).empty?
           listing = Listing.create(
@@ -26,9 +26,10 @@ class ScraperController < ApplicationController
             source: "Aria Apartments"
           )
           location.listings.push(listing)
-        end #where
-      end #avail_units
-    end
+        end #if listing with the scraped unit num doesn't exist create a new listing and add to location
+      end #avail_units.each
+    end#if location table doesnt include 'cerritos,ca', create it
+
     b.close
     flash[:notice] = "Done scraping data"
     render :scrape
@@ -42,11 +43,11 @@ class ScraperController < ApplicationController
     available_units.each do |unit|
       Listing.all.each do |listing|
         if listing.unit_number == unit.css('.listing-unit-num').text
-          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text) 
+          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
           if !listing.days.empty?
             listing.days.each do |day|
               if listing.get_unique_dates.include?(Date.today.strftime("%m/%d/%Y")) && (day.rent != new_day.rent)
-                day.update(rent: unit.css('.listing-unit-info').children[6].text)
+                day.update(rent: unit.css('.listing-unit-info').children[6].text.delete("$"))
               elsif listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
                 new_day.save
                 listing.days.push(new_day) 
@@ -105,7 +106,7 @@ class ScraperController < ApplicationController
           availability: unit.css('.listing-unit-date').text,
           source: "Aria Apartments"
         )
-        new_day = Day.create(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text)
+        new_day = Day.create(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$"))
         Location.first.listings.push(listing)
         listing.days.push(new_day)
       end
