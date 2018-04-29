@@ -4,7 +4,16 @@ class Listing < ActiveRecord::Base
 
   def self.to_csv(options: {})
   end
-  
+    
+  def get_unique_dates
+    # listing = Listing.find_by(id: self.id)
+    # day_records = listing.days.select(:date).distinct
+    # day_records.map do |day|
+    #   day.date
+    # end
+    self.days.distinct.pluck(:date)
+  end
+
   def self.floorplan_hash
     hash = {
       "S1": 0, 
@@ -105,15 +114,6 @@ class Listing < ActiveRecord::Base
       availability,
       floorplan
     ")
-  end
-
-  def get_unique_dates
-    # listing = Listing.find_by(id: self.id)
-    # day_records = listing.days.select(:date).distinct
-    # day_records.map do |day|
-    #   day.date
-    # end
-    Listing.find_by(id: self.id).days.select(:date).distinct.pluck(:date)
   end
 
   def self.by_floorplan
