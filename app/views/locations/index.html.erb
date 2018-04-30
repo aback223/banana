@@ -5,39 +5,40 @@
 </div>
 
 <div id="chartA" class="tabcontent">
-  <% @locations.each do |location|  %>
-    <h3><%= location.city_state %></h3>
-    <table id="location_data">
+  <h3><%= @location.city_state %></h3>
+  <table id="location_data">
+    <tr>
+      <th>Property</th>
+      <th>Unit Type</th>
+      <th>Floor Plan</th>
+      <th>Unit #</th>
+      <th>SF</th>
+      <th>Status</th>
+      <% @location.get_unique_dates.each do |day| %>
+        <th><%= day %></th>
+      <% end %>
+    </tr>
+    <% @listings.each do |listing| %>
       <tr>
-        <th>Property</th>
-        <th>Unit Type</th>
-        <th>Floor Plan</th>
-        <th>Unit #</th>
-        <th>SF</th>
-        <th>Status</th>
-        <% location.get_unique_dates.reverse.each do |day| %>
-          <th><%= day %></th>
+        <td><%= listing.source %></td>
+        <td><%= listing.unit_type %></td>
+        <td><%= listing.floorplan %></td>
+        <td><%= listing.unit_number %></td>
+        <td><%= listing.sq_feet %></td>
+        <td><%= listing.availability %></td>
+        <% Day.get_unique_dates.each do |date| %>
+          <% rent = listing.days.where(date: date).pluck(:rent).first %>
+          <% if !listing.get_unique_dates.include?(date) %>
+            <td>0</td>
+          <% elsif listing.get_unique_dates.include?(date) && rent == "0" %>
+            <td>0</td>
+          <% elsif listing.get_unique_dates.include?(date) && rent != "0" %>
+            <td> $ <%= rent %></td>
+          <% end %>
         <% end %>
       </tr>
-      <% @listings.each do |listing| %>
-        <tr>
-          <td><%= listing.source %></td>
-          <td><%= listing.unit_type %></td>
-          <td><%= listing.floorplan %></td>
-          <td><%= listing.unit_number %></td>
-          <td><%= listing.sq_feet %></td>
-          <td><%= listing.availability %></td>
-          <% listing.days.order(:date).reverse.each do |day| %>
-            <% if day.rent == "0" %>
-              <td><%=day.rent %></td>
-            <% else %>
-              <td>$<%=day.rent %></td>
-            <% end %>
-          <% end %>
-        </tr>
-      <% end %>
-    </table>
-  <% end %> <%#= locations %>
+    <% end %>
+  </table>
 </div>
 
 <div id="chartB" class="tabcontent">
