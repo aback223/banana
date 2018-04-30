@@ -25,7 +25,9 @@ class ScraperController < ApplicationController
             availability: unit.css('.listing-unit-date').text,
             source: "Aria Apartments"
           )
+          new_day = Day.create(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$"))
           location.listings.push(listing)
+          listing.days.push(new_day)
         end #if listing with the scraped unit num doesn't exist create a new listing and add to location
       end #avail_units.each
     end#if location table doesnt include 'cerritos,ca', create it
@@ -83,7 +85,13 @@ class ScraperController < ApplicationController
           listing.days.push(new_day) 
         end
       elsif unit_array.include?(listing.unit_number) && listing.availability == "Unavailable"
-        listing.update(availability: unit.css('.listing-unit-date').text)
+        listing.update(
+          unit_type: unit.css('.listing-unit-info').children[2].text,
+          image: unit.css('.listing-unit-image img').attr("src").text,
+          floorplan: unit.css('.listing-unit-info').children[0].text,
+          sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
+          availability: unit.css('.listing-unit-date').text
+        )
         new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
         if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
           new_day.save
