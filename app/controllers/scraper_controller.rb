@@ -18,7 +18,7 @@ class ScraperController < ApplicationController
         if Listing.where(unit_number: unit.css('.listing-unit-num').text).empty?
           listing = Listing.create(
             unit_number: unit.css('.listing-unit-num').text, 
-            unit_type: unit.css('.listing-unit-info').children[2].text,
+            unit_type: unit.css('.listing-unit-info').children[2].text.split("  • ").join(", "),
             image: unit.css('.listing-unit-image img').attr("src").text,
             floorplan: unit.css('.listing-unit-info').children[0].text,
             sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
@@ -75,27 +75,34 @@ class ScraperController < ApplicationController
     unit_array = []
     available_units.each do |unit|
       unit_array << unit.css('.listing-unit-num').text
-    end
-    Listing.all.each do |listing|
-      if unit_array.exclude?(listing.unit_number) && listing.availability != "Unavailable"
-        listing.update(availability: "Unavailable")
-        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "0") 
-        if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
-          new_day.save
-          listing.days.push(new_day) 
-        end
-      elsif unit_array.include?(listing.unit_number) && listing.availability == "Unavailable"
-        listing.update(
-          unit_type: unit.css('.listing-unit-info').children[2].text,
-          image: unit.css('.listing-unit-image img').attr("src").text,
-          floorplan: unit.css('.listing-unit-info').children[0].text,
-          sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
-          availability: unit.css('.listing-unit-date').text
-        )
-        new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
-        if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
-          new_day.save
-          listing.days.push(new_day) 
+      Listing.all.each do |listing|
+        if unit_array.exclude?(listing.unit_number) && listing.availability != "Unavailable"
+          listing.update(availability: "Unavailable")
+          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: "0") 
+          if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+            new_day.save
+            listing.days.push(new_day) 
+          end
+        elsif unit_array.include?(listing.unit_number) && listing.unit_number == unit.css('.listing-unit-num').text && listing.availability == "Unavailable"
+          listing.update(
+            unit_type: unit.css('.listing-unit-info').children[2].text.split("  • ").join(", "),
+            image: unit.css('.listing-unit-image img').attr("src").text,
+            floorplan: unit.css('.listing-unit-info').children[0].text,
+            sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
+            availability: unit.css('.listing-unit-date').text
+          )
+          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
+          if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+            new_day.save
+            listing.days.push(new_day) 
+          end
+        elsif unit_array.include?(listing.unit_number) && listing.unit_number == unit.css('.listing-unit-num').text && listing.availability != unit.css('.listing-unit-date').text
+          listing.update(availability: unit.css('.listing-unit-date').text)
+          new_day = Day.new(date: Date.today.strftime("%m/%d/%Y"), rent: unit.css('.listing-unit-info').children[6].text.delete("$")) 
+          if !listing.days.empty? && listing.get_unique_dates.exclude?(Date.today.strftime("%m/%d/%Y"))
+            new_day.save
+            listing.days.push(new_day) 
+          end
         end
       end
     end
@@ -114,7 +121,7 @@ class ScraperController < ApplicationController
       if Listing.where(unit_number: unit.css('.listing-unit-num').text).empty?
         listing = Listing.create(
           unit_number: unit.css('.listing-unit-num').text, 
-          unit_type: unit.css('.listing-unit-info').children[2].text,
+          unit_type: unit.css('.listing-unit-info').children[2].text.split("  • ").join(", "),
           image: unit.css('.listing-unit-image img').attr("src").text,
           floorplan: unit.css('.listing-unit-info').children[0].text,
           sq_feet: unit.css('.listing-unit-info').children[4].text.split(" ")[0], 
