@@ -8,6 +8,9 @@ class Listing < ActiveRecord::Base
       csv << [" "] #add blank row
       csv << [" "]
       sectionB(csv)
+      csv << ["Total", calc_totalUnits, calc_totalVacantNum, "#{calc_ttlVacantPct}%", totalAvailNum, "#{availPct}%", exposureTtl, "#{ttlExpPct}%"]
+      binding.pry
+      binding.pry
       csv << [" "] 
       csv << [" "]
       sectionC(csv)
@@ -53,7 +56,7 @@ class Listing < ActiveRecord::Base
 
       calc_vacantPct.each do |k, vac_percent|
         if k == key
-          row << vac_percent
+          row << "#{vac_percent}%"
         end
       end
 
@@ -65,7 +68,7 @@ class Listing < ActiveRecord::Base
 
       calc_availPct.each do |z, avail_pct|
         if z == key 
-          row << avail_pct
+          row << "#{avail_pct}%"
         end
       end
 
@@ -77,7 +80,7 @@ class Listing < ActiveRecord::Base
 
       exposure_pct.each do |a, exp_pct|
         if a == key
-          row << exp_pct
+          row << "#{exp_pct}%"
         end
       end
 
