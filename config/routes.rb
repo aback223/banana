@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   get '/check_availability', to: 'scraper#check_availability'
   get '/saveDailyTotals', to: 'daily_data#calcAndAdd'
   get '/findNewData', to: 'scraper#add_newData'
+
+  get '/export', to: 'csv_export#export'
 end
