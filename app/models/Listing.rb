@@ -2,7 +2,117 @@ class Listing < ActiveRecord::Base
   belongs_to :location
   has_many :days
 
-  def self.to_csv(options: {})
+  def self.to_csv
+    CSV.generate do |csv|
+      sectionA(csv)              
+      csv << [" "] #add blank row
+      csv << [" "]
+      sectionB(csv)
+      csv << [" "] 
+      csv << [" "]
+      sectionC(csv)
+    end
+  end
+
+  def self.sectionA(csv)
+    header = ["Property", "Unit Type", "Floor Plan", "Unit #", "SF", "Status"]
+    date_headers = Day.get_unique_dates #descending order
+    csv << header + date_headers
+    sort_avail_then_floorplan.each do |listing|              
+      values = [listing.source, listing.unit_type, listing.floorplan, listing.unit_number, listing.sq_feet, listing.availability]
+      Day.get_unique_dates.each do |date|
+        rent = listing.days.where(date: date).pluck(:rent).first
+        if !listing.get_unique_dates.include?(date)
+          values << 0
+        elsif listing.get_unique_dates.include?(date) && rent == "0"
+          values << 0
+        elsif listing.get_unique_dates.include?(date) && rent != "0"
+          values << rent
+        end
+      end
+      csv << values 
+    end
+  end
+
+  def self.sectionB(csv)
+    csv << ["Floor Plan", "Total", "Vacant", "Vacant %", "Available", "Available %", "Exposure", "Exposure %", "Min", "Max", "Avg"] #sectionB headers
+    row = []
+    by_floorplan.each do |key, value|
+      row << key
+      total_by_floorplan.each do |unitNum, unit_total|
+        if unitNum == key
+          row << unit_total
+        end
+      end
+
+      vacant_num.each do |unit, vac_total|
+        if unit == key
+          row << vac_total
+        end
+      end
+
+      calc_vacantPct.each do |k, vac_percent|
+        if k == key
+          row << vac_percent
+        end
+      end
+
+      calc_availNum.each do |x, avail_num|
+        if x == key
+          row << avail_num
+        end
+      end
+
+      calc_availPct.each do |z, avail_pct|
+        if z == key 
+          row << avail_pct
+        end
+      end
+
+      if value != 0
+        row << value.count
+      else
+        row << 0
+      end
+
+      exposure_pct.each do |a, exp_pct|
+        if a == key
+          row << exp_pct
+        end
+      end
+
+      calcMin.each do |b, min_rent|
+        if b == key && min_rent != 0
+          row << "$#{min_rent}"
+        elsif b == key && min_rent == 0
+          row << min_rent
+        end
+      end
+
+      calcMax.each do |c, max_rent|
+        if c == key && max_rent != 0
+          row << "$#{max_rent}"
+        elsif c == key && max_rent == 0
+          row << max_rent
+        end
+      end
+
+      Day.calcAvg.each do |d, avg_rent|
+        if d == key && avg_rent != []
+          row << "$#{avg_rent}"
+        elsif d == key && avg_rent == []
+          row << "0"
+        end
+      end
+      csv << row
+      row.clear
+    end #by_floorplan
+  end
+
+  def self.sectionC(csv)
+    csv << ["Total Property"] + DailyData.distinct.order(:date).pluck(:date)
+    csv << ["Occupancy"] + DailyData.order(:date).pluck(:occupancy)
+    csv << ["Leased"] + DailyData.order(:date).pluck(:leased)
   end
     
   def get_unique_dates
@@ -118,9 +228,9 @@ class Listing < ActiveRecord::Base
 
   def self.by_floorplan
     hash = self.hash_with_arrays
-    hash.each do |key,value|
-      Listing.all.each do |listing|
-        if listing.availability != "Unavailable" && listing.floorplan == key
+    hash.each do |key, value|
+      self.where(floorplan: key).each do |listing|
+        if listing.availability != "Unavailable"
           hash[key] << listing
         end
       end
@@ -139,8 +249,8 @@ class Listing < ActiveRecord::Base
   def self.vacant_num
     hash = self.floorplan_hash
     hash.each do |key,value|
-      self.all.each do |listing|
-        if key == listing.floorplan && listing.availability == "Available Now"
+      self.where(floorplan: key).each do |listing|
+        if listing.availability == "Available Now"
           hash[key] +=1
         end
       end
@@ -171,8 +281,8 @@ class Listing < ActiveRecord::Base
   def self.calc_availNum
     hash = self.floorplan_hash
     hash.each do |key,value|
-      self.all.each do |listing|
-        if key == listing.floorplan && listing.availability.include?("/")
+      self.where(floorplan: key).each do |listing|
+        if listing.availability.include?("/")
           hash[key] += 1
         end
       end
